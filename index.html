@@ -1,6 +1,134 @@
+<!-- shamelessly stolen from scott murray: http://alignedleft.com/tutorials -->
 <!DOCTYPE html>
-<h1>Sam Masunaga!</h1>
-<h2>This is my website and I don't really know what I'm doing</h2>
-<h3>hello</h3>
-<p>here we go with adding more text</p>
-<p>Hello there.</p>
+<html lang="en">
+    
+    <head>
+        <style type="text/css">
+        .svg {
+            stroke: 2px solid white;
+        }
+        .testbar {
+            fill: #ffffff;
+                }
+        .bar {
+            fill: #ddd;
+                        
+        }
+        .g-ESPN {
+            fill: orange;
+        }
+		
+		.g-TNT{
+			fill: #000;
+		}
+		
+		.g-C-SPAN{
+			fill:#000;
+		}
+		
+		.g-ESPN-2{
+			fill:#000;
+		}
+    
+        </style>
+
+        <style type="text/css">
+        svg {
+            border:1px solid white;
+        }
+        </style>
+
+
+        <meta charset="utf-8">
+        <title>Channel Prices</title>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            // Your beautiful D3 code will go here
+            
+            d3.select("body").append("h1").text("An expensive outlier")
+ 			d3.select("body").append("p").text("ESPN’s average monthly price is more than four times the monthly fee for the next most expensive national network.")
+            var margin = {top: 20, right: 10, bottom: 20, left: 10};
+
+            var width = 600 - margin.left - margin.right,
+                height = 250 - margin.top - margin.bottom;
+
+            var svg = d3.select("body").append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+             var testRectangle = svg.append("rect")
+                .attr("x", 20)
+                .attr("y", 100)
+                .attr("height", 50)
+                .attr("width", 200)
+                .attr("class", "testbar");
+
+           d3.csv("subscription-prices.csv", function(err, prices) {
+                console.log(prices)
+
+                prices.forEach(function(d) {
+                 // recasts d.2013 as a number, not a string
+                d.X2013 = +d.X2013;
+                })
+
+                prices.sort(function(a,b) {
+                return a.X2013 - b.X2013;
+                });
+
+            var y = d3.scale.linear()
+                .domain([0,6])
+                .range([0,height]);
+
+            var x = d3.scale.linear()
+                .domain([0,prices.length])
+                .range([0,width]); 
+
+            var bar = svg.selectAll(".bar")
+                .data(prices)
+                .enter()
+                .append("rect")
+                .attr("width", 2)
+                .attr("height", function(d) { return y(d.X2013)} )
+                .attr("y", function(d) { return height - y(d.X2013)  })
+                .attr("x", function(d, i) { return 3 * i})
+                .attr("class", "bar")
+                .classed("g-ESPN", function(d) { return d.Network == "ESPN"})
+				.classed("g-ESPN-2", function(d) { return d.Network == "ESPN-2"})
+				.classed("g-TNT", function(d) { return d.Network == "TNT"})
+				.classed("g-C-SPAN", function(d) { return d.Network == "C-SPAN"});
+        
+            svg.append("text")
+                .attr("class", "g-label")
+                .attr("x", 480)
+                .attr("y", 30)
+                .text("ESPN ($5.54)")
+        })
+			svg.append("text")
+                .attr("class", "g-label")
+                .attr("x", 480)
+                .attr("y", 160)
+                .text("TNT ($0.59)")
+		
+			svg.append("text")
+      			.attr("class", "g-label")
+                .attr("x", 80)
+                .attr("y", 200)
+                .text("C-SPAN ($0.06)")
+
+			svg.append("text")
+		    .attr("class", "g-label")
+		    .attr("x", 480)
+		    .attr("y", 100)
+		    .text("ESPN-2");
+        </script>
+
+		<p>1. Why are so many channels free of charge?</p><br>
+		<p>2. How much of a profit does ESPN make?</p><br>
+		<p>3. How does C-SPAN make a profit when it charges so little?</p>
+
+    </body>
+</html>
